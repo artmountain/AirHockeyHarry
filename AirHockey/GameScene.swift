@@ -11,7 +11,7 @@ import SpriteKit
 class GameScene: SKScene {
     var player1Bat :SKSpriteNode?
     var player2Bat :SKSpriteNode?
-    
+    var puck :SKSpriteNode?
     
     override func didMoveToView(view: SKView) {
         // Make player bats
@@ -20,24 +20,27 @@ class GameScene: SKScene {
         player1BatShape.fillColor = UIColor.yellowColor()
         player1Bat?.addChild(player1BatShape)
         player1Bat!.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) - 200);
-       
+ 
         player2Bat = SKSpriteNode()
         let player2BatShape = SKShapeNode(circleOfRadius : 20)
         player2BatShape.fillColor = UIColor.orangeColor()
         player2Bat?.addChild(player2BatShape)
         player2Bat!.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + 200);
-        // player1Bat = SKSpriteNode(circleOfRadius : 20)
-       
-        /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Start!";
-        myLabel.fontSize = 65;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
         
-        self.view?.backgroundColor =  UIColor.blackColor()
-        self.addChild(myLabel)
+        //making puck
+        puck = SKSpriteNode()
+        let puckShape = SKShapeNode(circleOfRadius : 20)
+        puckShape.fillColor = UIColor.whiteColor()
+        puck?.addChild(puckShape)
+        puck!.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+
+       
+        
+        view.backgroundColor =  UIColor.blackColor()
+        
         self.addChild(player1Bat!)
         self.addChild(player2Bat!)
+        self.addChild(puck!)
     }
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {

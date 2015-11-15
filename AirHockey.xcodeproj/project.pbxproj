@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE487AA81BF8E800006D720F /* TitleScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE487AA71BF8E800006D720F /* TitleScreen.swift */; };
 		CE7286451BF2891500F2B004 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7286441BF2891500F2B004 /* AppDelegate.swift */; };
 		CE7286471BF2891500F2B004 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = CE7286461BF2891500F2B004 /* GameScene.sks */; };
 		CE7286491BF2891500F2B004 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7286481BF2891500F2B004 /* GameScene.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CE487AA71BF8E800006D720F /* TitleScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleScreen.swift; sourceTree = "<group>"; };
 		CE72863F1BF2891500F2B004 /* AirHockey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirHockey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7286431BF2891500F2B004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE7286441BF2891500F2B004 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				CE72864F1BF2891500F2B004 /* Images.xcassets */,
 				CE7286511BF2891500F2B004 /* LaunchScreen.xib */,
 				CE7286421BF2891500F2B004 /* Supporting Files */,
+				CE487AA71BF8E800006D720F /* TitleScreen.swift */,
 			);
 			path = AirHockey;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 			files = (
 				CE7286491BF2891500F2B004 /* GameScene.swift in Sources */,
 				CE72864B1BF2891500F2B004 /* GameViewController.swift in Sources */,
+				CE487AA81BF8E800006D720F /* TitleScreen.swift in Sources */,
 				CE7286451BF2891500F2B004 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -419,6 +423,7 @@
 				CE7286641BF2891500F2B004 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CE7286651BF2891500F2B004 /* Build configuration list for PBXNativeTarget "AirHockeyTests" */ = {
 			isa = XCConfigurationList;
@@ -427,6 +432,7 @@
 				CE7286671BF2891500F2B004 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
