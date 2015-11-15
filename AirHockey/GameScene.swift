@@ -64,6 +64,19 @@ class GameScene: SKScene {
 */
         }
     }
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        for touch in (touches as! Set<UITouch>) {
+            let touchLocation = touch.locationInNode(self)
+            let touchedNode = self.nodeAtPoint(touchLocation)
+            if touchedNode is SKSpriteNode {
+                var selectedNode = touchedNode as! SKSpriteNode
+                let previousPosition = touch.previousLocationInNode(self)
+                let translation = CGPoint(x: touchLocation.x - previousPosition.x, y: touchLocation.y - previousPosition.y)
+                selectedNode.position = CGPoint(x: touchLocation.x + translation.x, y: touchLocation.y + translation.y)
+            }
+        }
+    }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
