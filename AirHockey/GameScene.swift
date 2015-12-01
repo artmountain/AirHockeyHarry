@@ -13,16 +13,18 @@ class GameScene: SKScene {
     var player2Bat :SKNode?
     var puck: SKNode?
     
+    let ballGroup: UInt32 = 0b001
+    let batGroup: UInt32 = 0b010
+    
     override func didMoveToView(view: SKView) {
         //making player1 bat
-        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 20)
+        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 20, bitMask : batGroup)
         
         //making player2 bat
-        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 20)
+        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 20, bitMask : batGroup)
         
         //making puck
-        puck = createObject(UIColor.whiteColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 10)
-    
+        puck = createObject(UIColor.whiteColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 10, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
         
         self.addChild(player1Bat!)
@@ -32,10 +34,10 @@ class GameScene: SKScene {
         self.physicsWorld.gravity  = CGVectorMake(0, 0)
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         
-        for touch in (touches as! Set<UITouch>) {
+        for touch in (touches ) {
             /*
             let location = touch.locationInNode(self)
             
@@ -54,8 +56,8 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        for touch in (touches as! Set<UITouch>) {
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch in (touches ) {
             let touchLocation = touch.locationInNode(self)
             /*
             let touchedNode = self.nodeAtPoint(touchLocation)
@@ -66,7 +68,7 @@ class GameScene: SKScene {
             */
             
             
-            var touchedNode = self.nodeAtPoint(touchLocation)
+            let touchedNode = self.nodeAtPoint(touchLocation)
             if touchedNode is SKShapeNode {
               //  let selectedNode = touchedNode.parent
                 let selectedNode = touchedNode
@@ -76,30 +78,43 @@ class GameScene: SKScene {
             }
         }
     }
+    /*
+    override func didBeginContact(contact: SKPhysicsContact) {
+        if(contact.bodyB.categoryBitMask == ballGroup && contact.bodyA.categoryBitMask == batGroup || (contact.bodyA.categoryBitMask == ballGroup && contact.bodyB.categoryBitMask == ballGroup)){
+            
+            //this contact doesn't work
+            //should make ball bounce
+            puck!.physicsBody?.applyImpulse(CGVectorMake(0, 300))
+        }
+        
+    }*/
+    
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
     
-    func createObject(colour: UIColor, xpos: CGFloat, ypos: CGFloat, radius: CGFloat)->SKShapeNode {
-        /*
+    func createObject(colour: UIColor, xpos: CGFloat, ypos: CGFloat, radius: CGFloat, bitMask: UInt32)->SKShapeNode {
         // Make object
-        var sprite = SKSpriteNode()
-        let spriteShape = SKShapeNode(circleOfRadius : radius)
-        spriteShape.fillColor = colour
-        sprite.addChild(spriteShape)
+        let sprite = SKShapeNode(circleOfRadius : radius)
+        sprite.fillColor = colour
         sprite.position = CGPoint(x:xpos, y:ypos);
         
         // Give it physics properties
-        var test = spriteShape.frame.size.width/2
-        sprite.physicsBody = SKPhysicsBody(circleOfRadius: spriteShape.frame.size.width/2)
-        sprite.physicsBody!.friction=0.0
-        sprite.physicsBody!.mass=0.6
-        sprite.physicsBody!.restitution=3
-        sprite.physicsBody!.allowsRotation=true
+        let physicsBody = SKPhysicsBody(circleOfRadius:sprite.frame.size.width/2)
+       // sprite.physicsBody = SKPhysicsBody(bodyWithCircleOfRadius:sprite.size.width/2)
+   //     sprite.physicsBody = [SKPhysicsBody bodyWithTexture:sprite.texture size:sprite.texture.size];
+   //     sprite.physicsBody = SKPhysicsBody(circleOfRadius: spriteShape.frame.size.width/2)
+        physicsBody.friction=0.0
+        physicsBody.mass=0.6
+        physicsBody.restitution=3
+        physicsBody.allowsRotation=true
+        physicsBody.dynamic = true;
+        physicsBody.categoryBitMask = bitMask
+        sprite.physicsBody = physicsBody
         
         return sprite
-        */
+        /*
         // Make object
         let spriteShape = SKShapeNode(circleOfRadius : radius)
         spriteShape.fillColor = colour
@@ -114,7 +129,7 @@ class GameScene: SKScene {
         
         return spriteShape
 
-     
+     */
        
     }
 }

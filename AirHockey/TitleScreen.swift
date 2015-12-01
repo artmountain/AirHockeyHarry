@@ -34,11 +34,11 @@ class TitleScreen: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch: AnyObject in touches {
             // Transition to Game of Life
-            var gameScene = GameScene(size: self.size)
-            var transition = SKTransition.flipHorizontalWithDuration(2.0)
+            let gameScene = GameScene(size: self.size)
+            let transition = SKTransition.flipHorizontalWithDuration(2.0)
             gameScene.scaleMode = SKSceneScaleMode.AspectFill
             self.scene!.view?.presentScene(gameScene, transition: transition)
         }
