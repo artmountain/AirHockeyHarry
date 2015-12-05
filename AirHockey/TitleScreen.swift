@@ -38,7 +38,7 @@ class TitleScreen: SKScene {
         for touch: AnyObject in touches {
             // Transition to Game of Life
             let gameScene = GameScene(size: self.size)
-            let transition = SKTransition.flipHorizontalWithDuration(2.0)
+            let transition = SKTransition.flipHorizontalWithDuration(0.2)
             gameScene.scaleMode = SKSceneScaleMode.AspectFill
             self.scene!.view?.presentScene(gameScene, transition: transition)
         }
