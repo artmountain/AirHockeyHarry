@@ -12,8 +12,6 @@ class GameScene: SKScene {
     var player1Bat :SKNode?
     var player2Bat :SKNode?
     var puck: SKNode?
-    var nonsense: SKShapeNode?
-    
     
     let ballGroup: UInt32 = 0b001
     let batGroup: UInt32 = 0b010
@@ -45,48 +43,13 @@ class GameScene: SKScene {
         //making puck
         puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
- /*
-        // Draw some nonsense
-      //let nonsense = SKShapeNode()
-        nonsense = SKShapeNode()
-        nonsense?.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-        let path = CGPathCreateMutable()
-        CGPathMoveToPoint(path, nil,nonsense!.position.x, nonsense!.position.y)
-        CGPathAddLineToPoint(path, nil, nonsense!.position.x+100, nonsense!.position.y)
-        nonsense!.path = path
-     //   nonsense.lineWidth = 5
-        nonsense!.strokeColor = UIColor.blueColor()
-        
-
-        
-        CGContextSetStrokeColorWithColor(context, UIColor.blueColor().CGColor)
-        CGContextSetLineWidth(context, CGFloat(5))
-        CGContextMoveToPoint(context, 0, CGRectGetMidY(self.frame))
-        CGContextAddLineToPoint(context, CGRectGetMaxX(self.frame), CGRectGetMidY(self.frame))
-        let imageView = UIImageView()
-        imageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-     //   view.addSubview(imageView)
-        */
-      //  let physicsBody = SKPhysicsBody (edgeLoopFromRect: self.frame)
-     //   self.physicsBody = physicsBody
         
         self.addChild(player1Bat!)
         self.addChild(player2Bat!)
         self.addChild(puck!)
-    //    self.addChild(nonsense!)
-      /*
-        let texture = SKTexture(image: imageView.image!)
-        let sprite = SKSpriteNode(texture: texture)
-       // let back: SKSpriteNode = SKSpriteNode(image: imageView.image)
-      //  back.i
-            self.addChild(sprite)
-        */
         
         self.physicsWorld.gravity  = CGVectorMake(0, 0)
-        
-        //drawBackground()
+    
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
