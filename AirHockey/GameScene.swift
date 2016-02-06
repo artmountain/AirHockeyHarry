@@ -25,8 +25,16 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         // Make pitch
-        let centreLine = createCentreLine()
+        let goalWidth:CGFloat = 120
+        let edgeWidth:CGFloat = 7
+        let pitchColour = UIColor.greenColor()
+        let centreLine = createCentreLine(pitchColour)
         self.addChild(centreLine)
+        
+        let leftSide = createPitchEdge(pitchColour, goalWidth: goalWidth, edgeWidth: edgeWidth, isLeftSide: true)
+        self.addChild(leftSide)
+        let rightSide = createPitchEdge(pitchColour, goalWidth: goalWidth, edgeWidth: edgeWidth, isLeftSide: false)
+        self.addChild(rightSide)
         
         //making player1 bat
         player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 40, bitMask : batGroup)
@@ -35,7 +43,7 @@ class GameScene: SKScene {
         player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 40, bitMask : batGroup)
         
         //making puck
-        puck = createObject(UIColor.whiteColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
+        puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
  /*
         // Draw some nonsense
@@ -61,8 +69,8 @@ class GameScene: SKScene {
         
      //   view.addSubview(imageView)
         */
-        let physicsBody = SKPhysicsBody (edgeLoopFromRect: self.frame)
-        self.physicsBody = physicsBody
+      //  let physicsBody = SKPhysicsBody (edgeLoopFromRect: self.frame)
+     //   self.physicsBody = physicsBody
         
         self.addChild(player1Bat!)
         self.addChild(player2Bat!)
@@ -155,16 +163,59 @@ class GameScene: SKScene {
         return sprite
     }
     
-    func createCentreLine()->SKShapeNode {
+    func createCentreLine(colour: UIColor)->SKShapeNode {
         let path = CGPathCreateMutable()
         CGPathMoveToPoint(path, nil, self.frame.minX, self.frame.midY)
         CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.midY)
         
         // Make object
-        let colour = UIColor.whiteColor()
         let sprite = SKShapeNode(path: path)
         sprite.strokeColor = colour
         sprite.fillColor = colour
+        
+        return sprite
+    }
+    
+    func createPitchEdge(colour: UIColor, goalWidth: CGFloat, edgeWidth: CGFloat, isLeftSide: Bool)->SKShapeNode {
+        let path = CGPathCreateMutable()
+        if (isLeftSide) {
+            let goalLeft = self.frame.midX - goalWidth / 2
+            CGPathMoveToPoint(path, nil, self.frame.minX, self.frame.minY)
+            CGPathAddLineToPoint(path, nil, self.frame.minX, self.frame.maxY)
+            CGPathAddLineToPoint(path, nil, goalLeft, self.frame.maxY)
+            CGPathAddLineToPoint(path, nil, goalLeft, self.frame.maxY - edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth, self.frame.maxY - edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, goalLeft, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, goalLeft, self.frame.minY)
+            CGPathAddLineToPoint(path, nil, self.frame.minX, self.frame.minY)
+        } else {
+            let goalRight = self.frame.midX + goalWidth / 2
+        
+            CGPathMoveToPoint(path, nil, self.frame.maxX, self.frame.minY)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.maxY)
+            CGPathAddLineToPoint(path, nil, goalRight, self.frame.maxY)
+            CGPathAddLineToPoint(path, nil, goalRight, self.frame.maxY - edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth, self.frame.maxY - edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, goalRight, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, goalRight, self.frame.minY)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.minY)
+        }
+        
+        // Make object
+        let sprite = SKShapeNode(path: path)
+        sprite.strokeColor = colour
+        sprite.fillColor = colour
+        
+        // Give it physics properties
+        let physicsBody = SKPhysicsBody(edgeLoopFromPath: path)
+        physicsBody.friction=0.0
+        physicsBody.mass=0.6
+        physicsBody.restitution=0.9
+        physicsBody.allowsRotation=true
+        physicsBody.dynamic = false;
+        sprite.physicsBody = physicsBody
         
         return sprite
     }
