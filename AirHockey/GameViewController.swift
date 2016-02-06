@@ -39,6 +39,8 @@ class GameViewController: UIViewController {
             /* Sprite Kit applies additional optimizations to improve rendering performance */
             skView.ignoresSiblingOrder = true
             
+            skView.multipleTouchEnabled = true
+            
             let scene = TitleScreen(size: view.frame.size)
             
             /* Set the scale mode to scale to fit the window */

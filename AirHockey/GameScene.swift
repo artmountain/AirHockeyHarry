@@ -12,28 +12,54 @@ class GameScene: SKScene {
     var player1Bat :SKNode?
     var player2Bat :SKNode?
     var puck: SKNode?
+    var nonsense: SKShapeNode?
+    
     
     let ballGroup: UInt32 = 0b001
     let batGroup: UInt32 = 0b010
     
-    var sprite: SKNode?
-    var touchPoint: CGPoint = CGPoint()
-    var touching: Bool = false
+    var touchLocationBat1: CGPoint?
+    var touchLocationBat2: CGPoint?
+    var bat1Touch: UITouch?
+    var bat2Touch: UITouch?
     
     override func didMoveToView(view: SKView) {
+        // Make pitch
+        let centreLine = createCentreLine()
+        self.addChild(centreLine)
+        
         //making player1 bat
-        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 20, bitMask : batGroup)
+        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 40, bitMask : batGroup)
         
         //making player2 bat
-        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 20, bitMask : batGroup)
+        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 40, bitMask : batGroup)
         
         //making puck
-        puck = createObject(UIColor.whiteColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 10, bitMask : ballGroup)
+        puck = createObject(UIColor.whiteColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
-        /*
-        var board = SKShapeNode(rect: CGRect(x: 10, y: 10, width: 300, height: 500), cornerRadius : 10)
-        board.physicsBody! = SKPhysicsBody(size : board.s
-        board.fillColor = UIColor.whiteColor()
+ /*
+        // Draw some nonsense
+      //let nonsense = SKShapeNode()
+        nonsense = SKShapeNode()
+        nonsense?.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        let path = CGPathCreateMutable()
+        CGPathMoveToPoint(path, nil,nonsense!.position.x, nonsense!.position.y)
+        CGPathAddLineToPoint(path, nil, nonsense!.position.x+100, nonsense!.position.y)
+        nonsense!.path = path
+     //   nonsense.lineWidth = 5
+        nonsense!.strokeColor = UIColor.blueColor()
+        
+
+        
+        CGContextSetStrokeColorWithColor(context, UIColor.blueColor().CGColor)
+        CGContextSetLineWidth(context, CGFloat(5))
+        CGContextMoveToPoint(context, 0, CGRectGetMidY(self.frame))
+        CGContextAddLineToPoint(context, CGRectGetMaxX(self.frame), CGRectGetMidY(self.frame))
+        let imageView = UIImageView()
+        imageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+     //   view.addSubview(imageView)
         */
         let physicsBody = SKPhysicsBody (edgeLoopFromRect: self.frame)
         self.physicsBody = physicsBody
@@ -41,49 +67,71 @@ class GameScene: SKScene {
         self.addChild(player1Bat!)
         self.addChild(player2Bat!)
         self.addChild(puck!)
-      //  self.addChild(board)
+    //    self.addChild(nonsense!)
+      /*
+        let texture = SKTexture(image: imageView.image!)
+        let sprite = SKSpriteNode(texture: texture)
+       // let back: SKSpriteNode = SKSpriteNode(image: imageView.image)
+      //  back.i
+            self.addChild(sprite)
+        */
         
         self.physicsWorld.gravity  = CGVectorMake(0, 0)
+        
+        //drawBackground()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         
         for touch in (touches) {
-         
-        }
-        
-        let touch = touches.first
-        if touch != nil {
-            let location = touch!.locationInNode(self)
+            let location = touch.locationInNode(self)
             if player1Bat!.frame.contains(location) {
-                sprite = player1Bat
-                touchPoint = location
-                touching = true
+                bat1Touch = touch
+                touchLocationBat1 = location
+            } else if player2Bat!.frame.contains(location) {
+                bat2Touch = touch
+                touchLocationBat2 = location
             }
         }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        for touch in (touches ) {
-            let touchLocation = touch.locationInNode(self)
-            
+        /*
+        for touch in (touches) {
+            if (touch == bat1Touch) {
+                touchLocationBat1 = touch.locationInNode(self)
+            } else if (touch == bat2Touch) {
+                touchLocationBat2 = touch.locationInNode(self)
+            }
         }
-        
-        let touch = touches.first! as UITouch
-        let location = touch.locationInNode(self)
-        touchPoint = location
+*/
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        touching = false
+        for touch in (touches) {
+            if (touch == bat1Touch) {
+                bat1Touch = nil
+            } else if (touch == bat2Touch) {
+                bat2Touch = nil
+            }
+        }
     }
     
     override func update(currentTime: CFTimeInterval) {
-        if touching {
+        if (bat1Touch != nil) {
             let dt:CGFloat = 1.0/60.0
-            let move = CGVector(dx: touchPoint.x-sprite!.position.x, dy: touchPoint.y-sprite!.position.y)
-            sprite!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
+            let location: CGPoint = bat1Touch!.locationInNode(self)
+            let move = CGVector(dx: location.x-touchLocationBat1!.x, dy: location.y-touchLocationBat1!.y)
+            player1Bat!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
+            touchLocationBat1 = location
+        }
+        if (bat2Touch != nil) {
+            let dt:CGFloat = 1.0/60.0
+            let location: CGPoint = bat2Touch!.locationInNode(self)
+            let move = CGVector(dx: location.x-touchLocationBat2!.x, dy: location.y-touchLocationBat2!.y)
+            player2Bat!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
+            touchLocationBat2 = location
         }
     }
     
@@ -103,6 +151,20 @@ class GameScene: SKScene {
         physicsBody.dynamic = true;
         physicsBody.categoryBitMask = bitMask
         sprite.physicsBody = physicsBody
+        
+        return sprite
+    }
+    
+    func createCentreLine()->SKShapeNode {
+        let path = CGPathCreateMutable()
+        CGPathMoveToPoint(path, nil, self.frame.minX, self.frame.midY)
+        CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.midY)
+        
+        // Make object
+        let colour = UIColor.whiteColor()
+        let sprite = SKShapeNode(path: path)
+        sprite.strokeColor = colour
+        sprite.fillColor = colour
         
         return sprite
     }
