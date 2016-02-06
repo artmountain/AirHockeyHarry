@@ -12,6 +12,8 @@ class GameScene: SKScene {
     var player1Bat :SKNode?
     var player2Bat :SKNode?
     var puck: SKNode?
+    var player1ScoreNode :SKLabelNode?
+    var player2ScoreNode :SKLabelNode?
     
     let ballGroup: UInt32 = 0b001
     let batGroup: UInt32 = 0b010
@@ -20,6 +22,11 @@ class GameScene: SKScene {
     var touchLocationBat2: CGPoint?
     var bat1Touch: UITouch?
     var bat2Touch: UITouch?
+    
+    var player1score: Int = 0
+    var player2score: Int = 0
+    
+    let scoreColour = UIColor.whiteColor()
     
     override func didMoveToView(view: SKView) {
         // Make pitch
@@ -34,18 +41,33 @@ class GameScene: SKScene {
         let rightSide = createPitchEdge(pitchColour, goalWidth: goalWidth, edgeWidth: edgeWidth, isLeftSide: false)
         self.addChild(rightSide)
         
+        // Make player 1 score
+        player1ScoreNode = SKLabelNode()
+        player1ScoreNode!.text = String(player1score)
+        player1ScoreNode!.setScale(6)
+        player1ScoreNode!.color = scoreColour
+        player1ScoreNode!.position = CGPoint(x : self.frame.midX, y: self.frame.midY - self.frame.height / 4 - player1ScoreNode!.frame.height / 2)
+        self.addChild(player1ScoreNode!)
+        
+        // Make player 2 score
+        player2ScoreNode = SKLabelNode()
+        player2ScoreNode!.text = String(player1score)
+        player2ScoreNode!.setScale(6)
+        player2ScoreNode!.color = scoreColour
+        player2ScoreNode!.position = CGPoint(x : self.frame.midX, y: self.frame.midY + self.frame.height / 4 - player2ScoreNode!.frame.height / 2)
+        self.addChild(player2ScoreNode!)
+        
         //making player1 bat
         player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 40, bitMask : batGroup)
+        self.addChild(player1Bat!)
         
         //making player2 bat
         player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 40, bitMask : batGroup)
+        self.addChild(player2Bat!)
         
         //making puck
         puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
-        
-        self.addChild(player1Bat!)
-        self.addChild(player2Bat!)
         self.addChild(puck!)
         
         self.physicsWorld.gravity  = CGVectorMake(0, 0)
@@ -90,6 +112,14 @@ class GameScene: SKScene {
     }
     
     override func update(currentTime: CFTimeInterval) {
+        // Check if a goal scored
+        if (puck?.position.y < self.frame.minY) {
+            incrementPlayer2Score()
+        }
+        if (puck?.position.y > self.frame.maxY) {
+            incrementPlayer1Score()
+        }
+        
         if (bat1Touch != nil) {
             let dt:CGFloat = 1.0/60.0
             let location: CGPoint = bat1Touch!.locationInNode(self)
@@ -181,5 +211,15 @@ class GameScene: SKScene {
         sprite.physicsBody = physicsBody
         
         return sprite
+    }
+    
+    func incrementPlayer1Score() {
+        ++player1score
+        player1ScoreNode!.text = String(player1score)
+    }
+
+    func incrementPlayer2Score() {
+        ++player2score
+        player2ScoreNode!.text = String(player2score)
     }
 }
