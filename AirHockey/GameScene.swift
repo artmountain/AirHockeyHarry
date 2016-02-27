@@ -25,7 +25,10 @@ class GameScene: SKScene {
     
     let goalWidth:CGFloat = 120
     let edgeWidth:CGFloat = 7
+    let edgeCornerRadius:CGFloat = 25
+
     let batRadius:CGFloat = 40
+    let puckRadius:CGFloat = 20
     
     var player1score: Int = 0
     var player2score: Int = 0
@@ -33,6 +36,8 @@ class GameScene: SKScene {
     let scoreColour = UIColor.whiteColor()
     
     override func didMoveToView(view: SKView) {
+        self.physicsWorld.gravity  = CGVectorMake(0, 0)
+        
         // Make pitch
         let pitchColour = UIColor.greenColor()
         let centreLine = createCentreLine(pitchColour)
@@ -49,6 +54,7 @@ class GameScene: SKScene {
         player1ScoreNode!.setScale(6)
         player1ScoreNode!.color = scoreColour
         player1ScoreNode!.position = CGPoint(x : self.frame.midX, y: self.frame.midY - self.frame.height / 4 - player1ScoreNode!.frame.height / 2)
+        player1ScoreNode?.zPosition = -1
         self.addChild(player1ScoreNode!)
         
         // Make player 2 score
@@ -57,7 +63,9 @@ class GameScene: SKScene {
         player2ScoreNode!.setScale(6)
         player2ScoreNode!.color = scoreColour
         player2ScoreNode!.position = CGPoint(x : self.frame.midX, y: self.frame.midY + self.frame.height / 4 - player2ScoreNode!.frame.height / 2)
+        player2ScoreNode?.zPosition = -1
         self.addChild(player2ScoreNode!)
+        
         
         //making player1 bat
         player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: batRadius, bitMask : batGroup)
@@ -68,18 +76,14 @@ class GameScene: SKScene {
         self.addChild(player2Bat!)
         
         //making puck
-        puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: 20, bitMask : ballGroup)
+        puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: puckRadius, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
         self.addChild(puck!)
-        
-        self.physicsWorld.gravity  = CGVectorMake(0, 0)
-    
     }
     
     func reset() {
         puck?.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         puck?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-       // puck?.
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -132,15 +136,14 @@ class GameScene: SKScene {
             reset()
         }
         
+        let dt:CGFloat = 1.0/30.0
         if (bat1Touch != nil) {
-            let dt:CGFloat = 1.0/60.0
             let location: CGPoint = bat1Touch!.locationInNode(self)
             let move = CGVector(dx: location.x-touchLocationBat1!.x, dy: location.y-touchLocationBat1!.y)
             player1Bat!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
             touchLocationBat1 = location
         }
         if (bat2Touch != nil) {
-            let dt:CGFloat = 1.0/60.0
             let location: CGPoint = bat2Touch!.locationInNode(self)
             let move = CGVector(dx: location.x-touchLocationBat2!.x, dy: location.y-touchLocationBat2!.y)
             player2Bat!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
@@ -193,20 +196,23 @@ class GameScene: SKScene {
             CGPathAddLineToPoint(path, nil, self.frame.minX, self.frame.maxY)
             CGPathAddLineToPoint(path, nil, goalLeft, self.frame.maxY)
             CGPathAddLineToPoint(path, nil, goalLeft, self.frame.maxY - edgeWidth)
-            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth, self.frame.maxY - edgeWidth)
-            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth + edgeCornerRadius, self.frame.maxY - edgeWidth)
+            CGPathAddArc(path, nil, self.frame.minX + edgeWidth + edgeCornerRadius, self.frame.maxY - edgeWidth - edgeCornerRadius, edgeCornerRadius, 0.5 * CGFloat(M_PI), CGFloat(M_PI), false)
+            CGPathAddLineToPoint(path, nil, self.frame.minX + edgeWidth, self.frame.minY + edgeWidth +  edgeCornerRadius)
+            CGPathAddArc(path, nil, self.frame.minX + edgeWidth + edgeCornerRadius, self.frame.minY + edgeWidth + edgeCornerRadius, edgeCornerRadius, CGFloat(M_PI), 1.5 * CGFloat(M_PI), false)
             CGPathAddLineToPoint(path, nil, goalLeft, self.frame.minY + edgeWidth)
             CGPathAddLineToPoint(path, nil, goalLeft, self.frame.minY)
             CGPathAddLineToPoint(path, nil, self.frame.minX, self.frame.minY)
         } else {
             let goalRight = self.frame.midX + goalWidth / 2
-        
             CGPathMoveToPoint(path, nil, self.frame.maxX, self.frame.minY)
             CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.maxY)
             CGPathAddLineToPoint(path, nil, goalRight, self.frame.maxY)
             CGPathAddLineToPoint(path, nil, goalRight, self.frame.maxY - edgeWidth)
-            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth, self.frame.maxY - edgeWidth)
-            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth, self.frame.minY + edgeWidth)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth - edgeCornerRadius, self.frame.maxY - edgeWidth)
+            CGPathAddArc(path, nil, self.frame.maxX - edgeWidth - edgeCornerRadius, self.frame.maxY - edgeWidth - edgeCornerRadius, edgeCornerRadius, 0.5 * CGFloat(M_PI), 0, true)
+            CGPathAddLineToPoint(path, nil, self.frame.maxX - edgeWidth, self.frame.minY + edgeWidth + edgeCornerRadius)
+            CGPathAddArc(path, nil, self.frame.maxX - edgeWidth - edgeCornerRadius, self.frame.minY + edgeWidth + edgeCornerRadius, edgeCornerRadius, 0, 1.5 * CGFloat(M_PI), true)
             CGPathAddLineToPoint(path, nil, goalRight, self.frame.minY + edgeWidth)
             CGPathAddLineToPoint(path, nil, goalRight, self.frame.minY)
             CGPathAddLineToPoint(path, nil, self.frame.maxX, self.frame.minY)
