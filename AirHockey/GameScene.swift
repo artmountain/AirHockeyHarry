@@ -23,6 +23,10 @@ class GameScene: SKScene {
     var bat1Touch: UITouch?
     var bat2Touch: UITouch?
     
+    let goalWidth:CGFloat = 120
+    let edgeWidth:CGFloat = 7
+    let batRadius:CGFloat = 40
+    
     var player1score: Int = 0
     var player2score: Int = 0
     
@@ -30,8 +34,6 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         // Make pitch
-        let goalWidth:CGFloat = 120
-        let edgeWidth:CGFloat = 7
         let pitchColour = UIColor.greenColor()
         let centreLine = createCentreLine(pitchColour)
         self.addChild(centreLine)
@@ -58,11 +60,11 @@ class GameScene: SKScene {
         self.addChild(player2ScoreNode!)
         
         //making player1 bat
-        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: 40, bitMask : batGroup)
+        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: batRadius, bitMask : batGroup)
         self.addChild(player1Bat!)
         
         //making player2 bat
-        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: 40, bitMask : batGroup)
+        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: batRadius, bitMask : batGroup)
         self.addChild(player2Bat!)
         
         //making puck
@@ -72,6 +74,12 @@ class GameScene: SKScene {
         
         self.physicsWorld.gravity  = CGVectorMake(0, 0)
     
+    }
+    
+    func reset() {
+        puck?.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        puck?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+       // puck?.
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -105,8 +113,10 @@ class GameScene: SKScene {
         for touch in (touches) {
             if (touch == bat1Touch) {
                 bat1Touch = nil
+                player1Bat?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             } else if (touch == bat2Touch) {
                 bat2Touch = nil
+                player2Bat?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             }
         }
     }
@@ -115,9 +125,11 @@ class GameScene: SKScene {
         // Check if a goal scored
         if (puck?.position.y < self.frame.minY) {
             incrementPlayer2Score()
+            reset()
         }
         if (puck?.position.y > self.frame.maxY) {
             incrementPlayer1Score()
+            reset()
         }
         
         if (bat1Touch != nil) {
@@ -134,6 +146,10 @@ class GameScene: SKScene {
             player2Bat!.physicsBody!.velocity=CGVector(dx: move.dx/dt, dy: move.dy/dt)
             touchLocationBat2 = location
         }
+        
+        // Don't let bats go through goal or through centre line
+        player1Bat?.position.y = min(self.frame.midY - batRadius, max((player1Bat?.position.y)!, self.frame.minY + edgeWidth + batRadius))
+        player2Bat?.position.y = max(self.frame.midY + batRadius, min((player2Bat?.position.y)!, self.frame.maxY - edgeWidth - batRadius))
     }
     
     func createObject(colour: UIColor, xpos: CGFloat, ypos: CGFloat, radius: CGFloat, bitMask: UInt32)->SKShapeNode {
