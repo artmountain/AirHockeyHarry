@@ -68,22 +68,30 @@ class GameScene: SKScene {
         
         
         //making player1 bat
-        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) - 200, radius: batRadius, bitMask : batGroup)
-        self.addChild(player1Bat!)
-        
+        player1Bat = createObject(UIColor.yellowColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: batRadius, bitMask : batGroup)
+    
         //making player2 bat
-        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame) + 200, radius: batRadius, bitMask : batGroup)
-        self.addChild(player2Bat!)
+        player2Bat = createObject(UIColor.orangeColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: batRadius, bitMask : batGroup)
         
         //making puck
         puck = createObject(UIColor.brownColor(), xpos:CGRectGetMidX(self.frame), ypos:CGRectGetMidY(self.frame), radius: puckRadius, bitMask : ballGroup)
         view.backgroundColor =  UIColor.blackColor()
+        
+        
+        reset()
+        
+        self.addChild(player1Bat!)
+        self.addChild(player2Bat!)
         self.addChild(puck!)
     }
     
     func reset() {
         puck?.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         puck?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        player1Bat?.position = CGPoint(x: self.frame.midX, y: self.frame.minY + (self.frame.midY - self.frame.minY) / 3)
+        player1Bat?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        player2Bat?.position = CGPoint(x: self.frame.midX, y: self.frame.maxY - (self.frame.maxY - self.frame.midY) / 3)
+        player2Bat?.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
